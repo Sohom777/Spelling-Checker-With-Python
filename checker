@@ -1,0 +1,34 @@
+import re
+import difflib
+
+# Load a dictionary of correctly spelled words
+with open('dictionary.txt', 'r') as file:
+    dictionary = set(word.strip() for word in file)
+
+def spell_check(text):
+    # Split the input text into words
+    words = re.findall(r'\b\w+\b', text.lower())
+
+    # Initialize a list to store misspelled words and their corrections
+    misspelled_words = []
+
+    for word in words:
+        if word not in dictionary:
+            # Find the closest matching word from the dictionary
+            closest_matches = difflib.get_close_matches(word, dictionary, n=1)
+            if closest_matches:
+                correction = closest_matches[0]
+                misspelled_words.append((word, correction))
+
+    return misspelled_words
+
+if __name__ == '__main__':
+    input_text = input('Enter text to spell check: ')
+    misspelled_words = spell_check(input_text)
+
+    if misspelled_words:
+        print('Misspelled words and suggested corrections:')
+        for misspelled, correction in misspelled_words:
+            print(f'{misspelled} -> {correction}')
+    else:
+        print('No misspelled words found.')
